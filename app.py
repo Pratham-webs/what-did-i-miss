@@ -91,7 +91,8 @@ with col2:
                 with st.spinner("Decrypting context and mapping priorities..."):
                     try:
                         genai.configure(api_key=api_key.strip())
-                        model = genai.GenerativeModel("gemini-1.5-flash")
+                        # Using standard stable model alias to avoid 404 errors
+                        model = genai.GenerativeModel("gemini-pro")
                         
                         prompt = f"""
                         You are an elite operational AI. Process this chat log and extract objective facts.
