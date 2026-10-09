@@ -12,14 +12,12 @@ os.environ.pop("GEMINI_API_KEY", None)
 # --- PREMIUM UI CSS ---
 st.markdown("""
     <style>
-    /* Styling the text area to look like a terminal */
     .stTextArea textarea { 
         border-radius: 10px; 
         border: 1px solid #444; 
         font-family: 'Courier New', Courier, monospace; 
         background-color: #0e1117;
     }
-    /* Glowing Gradient Button */
     .stButton>button { 
         background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%);
         color: white; 
@@ -35,7 +33,6 @@ st.markdown("""
         transform: translateY(-2px); 
         box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6); 
     }
-    /* Custom Output Box */
     .report-box { 
         padding: 25px; 
         border-radius: 10px; 
@@ -91,8 +88,10 @@ with col2:
             elif len(chat_text.strip()) < 10:
                 st.warning("Insufficient data stream to process.")
             else:
-                genai.configure(api_key=api_key.strip())
-                        # Updated model name to match current endpoints
+                with st.spinner("Decrypting context and mapping priorities..."):
+                    try:
+                        genai.configure(api_key=api_key.strip())
+                        # Valid production model endpoint
                         model = genai.GenerativeModel("gemini-2.5-flash")
                         
                         prompt = f"""
