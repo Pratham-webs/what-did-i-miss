@@ -91,8 +91,7 @@ with col2:
                 with st.spinner("Decrypting context and mapping priorities..."):
                     try:
                         genai.configure(api_key=api_key.strip())
-                        # Valid production model endpoint
-                        model = genai.GenerativeModel("gemini-2.5-flash")
+                        model = genai.GenerativeModel("gemini-1.5-flash")
                         
                         prompt = f"""
                         You are an elite operational AI. Process this chat log and extract objective facts.
