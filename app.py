@@ -94,9 +94,9 @@ with col2:
                 with st.spinner("Decrypting context and mapping priorities..."):
                     try:
                         genai.configure(api_key=api_key.strip())
-                        model = genai.GenerativeModel("gemini-3.8-flash")
+                        # Switched to gemini-1.5-flash to bypass rate limits
+                        model = genai.GenerativeModel("gemini-1.5-flash")
                         
-                        # High-precision prompt
                         prompt = f"""
                         You are an elite operational AI. Process this chat log and extract objective facts.
                         FORMAT EXACTLY AS FOLLOWS USING MARKDOWN:
@@ -119,10 +119,8 @@ with col2:
                             generation_config=genai.types.GenerationConfig(temperature=0.0)
                         )
                         
-                        # Animated success notification
                         st.toast("Intelligence Extracted Successfully!", icon="✅")
                         
-                        # Clean UI tabs
                         tab1, tab2 = st.tabs(["📑 Executive Report", "💾 Export Data"])
                         with tab1:
                             st.markdown(f"<div class='report-box'>{response.text}</div>", unsafe_allow_html=True)
