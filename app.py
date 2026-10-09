@@ -3,128 +3,139 @@ import google.generativeai as genai
 import os
 from datetime import datetime
 
-# --- PAGE CONFIGURATION & CSS ---
-st.set_page_config(page_title="What Did I Miss? | ProtocolX", page_icon="⚡", layout="wide")
+# --- PAGE CONFIGURATION ---
+st.set_page_config(page_title="Intel Engine | ProtocolX", page_icon="💠", layout="wide")
 
 os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
 os.environ.pop("GEMINI_API_KEY", None)
 
+# --- PREMIUM UI CSS ---
 st.markdown("""
     <style>
-    .stTextArea textarea { border-radius: 6px; font-family: monospace; font-size: 13px; }
-    .stButton>button { border-radius: 6px; font-weight: bold; transition: all 0.2s ease; }
-    .stButton>button:hover { transform: scale(1.02); }
-    .report-header { color: #ff4b4b; font-weight: 800; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+    /* Styling the text area to look like a terminal */
+    .stTextArea textarea { 
+        border-radius: 10px; 
+        border: 1px solid #444; 
+        font-family: 'Courier New', Courier, monospace; 
+        background-color: #0e1117;
+    }
+    /* Glowing Gradient Button */
+    .stButton>button { 
+        background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%);
+        color: white; 
+        border-radius: 8px; 
+        font-weight: 800; 
+        text-transform: uppercase; 
+        letter-spacing: 1px;
+        transition: all 0.3s ease; 
+        border: none; 
+        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+    }
+    .stButton>button:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6); 
+    }
+    /* Custom Output Box */
+    .report-box { 
+        padding: 25px; 
+        border-radius: 10px; 
+        border: 1px solid #333; 
+        background-color: #161a24; 
+        line-height: 1.6;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR & AUTHENTICATION ---
+# --- SIDEBAR AUTHENTICATION ---
 with st.sidebar:
-    st.header("🔑 System Auth")
-    api_key = st.text_input("Enter Gemini API Key:", type="password")
+    st.header("🔐 System Auth")
+    api_key = st.text_input("Gemini API Key:", type="password", placeholder="Enter key to unlock...")
     st.divider()
     
-    st.markdown("### 🧪 Simulation Data")
+    st.markdown("### 🧪 Quick Inject Data")
+    st.caption("Test the UI instantly with pre-configured crisis data.")
     sample_data = (
-        "[10:00] Sarah (Product): The payment gateway API is throwing 500 errors in production.\n"
-        "[10:02] Mark (DevOps): Investigating. Looks like the SSL certificate expired at midnight.\n"
-        "[10:05] Sarah (Product): We are losing $500/minute. When can this be fixed?\n"
-        "[10:08] Mark (DevOps): I am generating a new cert now. Will deploy by 10:30 AM.\n"
-        "[10:10] David (Legal): Ensure we notify users about the downtime per our SLA."
+        "[10:00] Sarah (Product): API is throwing 500 errors in production.\n"
+        "[10:02] Mark (DevOps): Investigating. SSL expired at midnight.\n"
+        "[10:05] Sarah (Product): Losing $500/min. Fix ETA?\n"
+        "[10:08] Mark (DevOps): Generating new cert. Deploy by 10:30 AM.\n"
+        "[10:10] David (Legal): Notify users about the downtime per our SLA."
     )
-    if st.button("Load Critical Incident Log"):
+    if st.button("Inject Critical Log"):
         st.session_state["chat_input"] = sample_data
 
 # --- HEADER ---
-st.title("⚡ What Did I Miss? v3.0")
-st.markdown("### Enterprise Context Extraction Engine")
+st.title("💠 ProtocolX: Context Engine")
+st.markdown("#### Enterprise-Grade Communication Distillation")
 
-# --- MAIN LAYOUT ---
-col_in, col_out = st.columns([1, 1.2], gap="large")
+# --- SPLIT LAYOUT WITH CONTAINERS ---
+col1, col2 = st.columns([1, 1.2], gap="large")
 
-with col_in:
-    st.markdown("#### 📥 Communications Stream")
-    default_val = st.session_state.get("chat_input", "")
-    chat_text = st.text_area(
-        "Raw chat logs:",
-        value=default_val,
-        height=400,
-        placeholder="Paste conversation data here..."
-    )
-    run_analysis = st.button("🧠 Execute Advanced Analysis", type="primary", use_container_width=True)
+with col1:
+    with st.container(border=True):
+        st.markdown("### 📡 Raw Intercept")
+        chat_text = st.text_area(
+            "Stream Input:", 
+            value=st.session_state.get("chat_input", ""), 
+            height=350,
+            placeholder="Awaiting data transmission..."
+        )
+        run_analysis = st.button("⚡ Initialize Analysis", use_container_width=True)
 
-with col_out:
-    st.markdown("#### 📊 Tactical Dashboard")
-    
-    if run_analysis:
-        if not api_key.strip():
-            st.error("⚠️ Authentication Required: Please input your Gemini API Key in the sidebar.")
-        elif len(chat_data := chat_text.strip()) < 15:
-            st.warning("⚠️ Insufficient Data: The input text is too short to analyze.")
+with col2:
+    with st.container(border=True):
+        st.markdown("### 🎯 Processed Intelligence")
+        if run_analysis:
+            if not api_key:
+                st.error("Access Denied: API Key required in sidebar.")
+            elif len(chat_text.strip()) < 10:
+                st.warning("Insufficient data stream to process.")
+            else:
+                with st.spinner("Decrypting context and mapping priorities..."):
+                    try:
+                        genai.configure(api_key=api_key.strip())
+                        model = genai.GenerativeModel("gemini-3.8-flash")
+                        
+                        # High-precision prompt
+                        prompt = f"""
+                        You are an elite operational AI. Process this chat log and extract objective facts.
+                        FORMAT EXACTLY AS FOLLOWS USING MARKDOWN:
+                        
+                        ### 📌 Executive Summary
+                        [2 sentences max summarizing the core issue]
+                        
+                        ### 🚨 Critical Risks
+                        * [Bullet points of blockers/risks]
+                        
+                        ### 🛠️ Action Protocol
+                        * **[Owner]** - [Task] (Deadline: [Time/Date if mentioned])
+                        
+                        RAW LOG:
+                        {chat_text}
+                        """
+                        
+                        response = model.generate_content(
+                            prompt, 
+                            generation_config=genai.types.GenerationConfig(temperature=0.0)
+                        )
+                        
+                        # Animated success notification
+                        st.toast("Intelligence Extracted Successfully!", icon="✅")
+                        
+                        # Clean UI tabs
+                        tab1, tab2 = st.tabs(["📑 Executive Report", "💾 Export Data"])
+                        with tab1:
+                            st.markdown(f"<div class='report-box'>{response.text}</div>", unsafe_allow_html=True)
+                        with tab2:
+                            st.info("Securely download this intelligence briefing for offline review.")
+                            st.download_button(
+                                "⬇️ Download Final Report (.txt)", 
+                                data=response.text, 
+                                file_name=f"Intel_{datetime.now().strftime('%H%M%S')}.txt", 
+                                use_container_width=True
+                            )
+                            
+                    except Exception as err:
+                        st.error(f"System Failure: {err}")
         else:
-            with st.spinner("Applying strict parsing protocols and extracting data..."):
-                try:
-                    genai.configure(api_key=api_key.strip())
-                    model = genai.GenerativeModel("gemini-3.8-flash")
-                    
-                    # --- ADVANCED PROMPT ENGINEERING (v3.0) ---
-                    prompt = f"""
-You are a highly analytical Chief Operating Officer. Your task is to process the following raw chat log and extract purely objective, actionable intelligence.
-
-CRITICAL INSTRUCTIONS:
-1. NO HALLUCINATION: Only include information explicitly stated in the text.
-2. NO CHIT-CHAT: Do not include conversational responses (e.g., "Here is the summary"). Output the exact Markdown structure below and nothing else.
-3. EDGE CASE PROTOCOL: If the input text is random characters (e.g., "asdfgh"), output ONLY: "⚠️ **SYSTEM ERROR: Invalid communication stream detected. No actionable data.**"
-
-REQUIRED OUTPUT STRUCTURE:
-<div class="report-header">INTEL REPORT: {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
-
-**🔥 OVERALL URGENCY SCORE: [Rate 1 to 10 based on context]**
-
-### 📌 1. Situation Brief
-[Max 2 sentences summarizing the core issue or topic.]
-
-### 🚨 2. Blockers & Risks
-* [List any identified blockers, errors, or risks. If none, state "No explicit risks identified."]
-
-### 🎯 3. Action Items & Owners
-* **[Name/Owner]**: [Specific task]
-
-### ⏰ 4. Hard Deadlines
-* **[Time/Date]** - [Deliverable]
-
----
-RAW LOG TO PROCESS:
-{chat_data}
-"""
-                    
-                    response = model.generate_content(
-                        prompt,
-                        generation_config=genai.types.GenerationConfig(
-                            temperature=0.0, # Zero creativity, maximum precision
-                            max_output_tokens=500
-                        )
-                    )
-                    
-                    # Create Tabs for better UI
-                    tab1, tab2 = st.tabs(["📝 Formatted Report", "📋 Raw Output"])
-                    
-                    with tab1:
-                        st.markdown(response.text, unsafe_allow_html=True)
-                        st.divider()
-                        # Export Feature for extra hackathon points
-                        st.download_button(
-                            label="💾 Download Intelligence Report (TXT)",
-                            data=response.text,
-                            file_name=f"intel_report_{datetime.now().strftime('%H%M%S')}.txt",
-                            mime="text/plain",
-                            use_container_width=True
-                        )
-                        
-                    with tab2:
-                        st.text(response.text)
-                        
-                except Exception as err:
-                    st.error(f"Execution Error: {err}")
-    else:
-        st.info("System standing by. Provide chat data and execute analysis.")
+            st.info("Awaiting command sequence. Inject data and initialize.")
