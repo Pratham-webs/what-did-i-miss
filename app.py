@@ -91,11 +91,9 @@ with col2:
             elif len(chat_text.strip()) < 10:
                 st.warning("Insufficient data stream to process.")
             else:
-                with st.spinner("Decrypting context and mapping priorities..."):
-                    try:
-                        genai.configure(api_key=api_key.strip())
-                        # Switched to gemini-1.5-flash to bypass rate limits
-                        model = genai.GenerativeModel("gemini-1.5-flash")
+                genai.configure(api_key=api_key.strip())
+                        # Updated model name to match current endpoints
+                        model = genai.GenerativeModel("gemini-2.5-flash")
                         
                         prompt = f"""
                         You are an elite operational AI. Process this chat log and extract objective facts.
