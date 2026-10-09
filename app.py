@@ -4,133 +4,160 @@ import os
 from datetime import datetime
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Intel Engine | ProtocolX", page_icon="💠", layout="wide")
+st.set_page_config(
+    page_title="What Did I Miss? | ProtocolX",
+    page_icon="⚡",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
+# Clear environment variables to prevent auth conflicts
 os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
 os.environ.pop("GEMINI_API_KEY", None)
 
-# --- PREMIUM UI CSS ---
+# --- PROFESSIONAL STYLING (UI/UX WEIGHTAGE) ---
 st.markdown("""
     <style>
     .stTextArea textarea { 
-        border-radius: 10px; 
-        border: 1px solid #444; 
+        border-radius: 8px; 
+        border: 1px solid #333; 
         font-family: 'Courier New', Courier, monospace; 
         background-color: #0e1117;
+        color: #e0e0e0;
     }
     .stButton>button { 
         background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%);
         color: white; 
         border-radius: 8px; 
-        font-weight: 800; 
+        font-weight: 700; 
         text-transform: uppercase; 
-        letter-spacing: 1px;
-        transition: all 0.3s ease; 
+        letter-spacing: 0.5px;
         border: none; 
-        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+        box-shadow: 0 4px 12px rgba(255, 65, 108, 0.3);
+        transition: all 0.2s ease-in-out;
     }
     .stButton>button:hover { 
-        transform: translateY(-2px); 
-        box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6); 
+        transform: translateY(-1px); 
+        box-shadow: 0 6px 16px rgba(255, 65, 108, 0.5); 
     }
-    .report-box { 
-        padding: 25px; 
-        border-radius: 10px; 
-        border: 1px solid #333; 
-        background-color: #161a24; 
-        line-height: 1.6;
+    .report-card { 
+        padding: 20px; 
+        border-radius: 8px; 
+        border: 1px solid #262730; 
+        background-color: #161922; 
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR AUTHENTICATION ---
+# --- SIDEBAR CONFIGURATION ---
 with st.sidebar:
     st.header("🔐 System Auth")
-    api_key = st.text_input("Gemini API Key:", type="password", placeholder="Enter key to unlock...")
+    api_key = st.text_input("Gemini API Key:", type="password", placeholder="Enter API key...")
+    st.caption("Secured locally in session memory.")
     st.divider()
     
-    st.markdown("### 🧪 Quick Inject Data")
-    st.caption("Test the UI instantly with pre-configured crisis data.")
-    sample_data = (
-        "[10:00] Sarah (Product): API is throwing 500 errors in production.\n"
-        "[10:02] Mark (DevOps): Investigating. SSL expired at midnight.\n"
-        "[10:05] Sarah (Product): Losing $500/min. Fix ETA?\n"
-        "[10:08] Mark (DevOps): Generating new cert. Deploy by 10:30 AM.\n"
-        "[10:10] David (Legal): Notify users about the downtime per our SLA."
+    st.markdown("### 🧪 Quick Inject Preset")
+    st.caption("Instantly load sample crisis data for testing.")
+    
+    sample_crisis = (
+        "[10:00] Sarah (Product): Payment gateway API is throwing 500 errors in production.\n"
+        "[10:02] Mark (DevOps): Investigating now. Looks like the SSL certificate expired at midnight.\n"
+        "[10:05] Sarah (Product): We are losing customer transactions. What is our fix ETA?\n"
+        "[10:08] Mark (DevOps): Generating new certificate. Will deploy hotfix by 10:30 AM.\n"
+        "[10:10] David (Legal): Ensure we log downtime metrics per our SLA agreement."
     )
-    if st.button("Inject Critical Log"):
-        st.session_state["chat_input"] = sample_data
+    
+    if st.button("Load Crisis Log"):
+        st.session_state["chat_input"] = sample_crisis
 
-# --- HEADER ---
-st.title("💠 ProtocolX: Context Engine")
-st.markdown("#### Enterprise-Grade Communication Distillation")
+# --- MAIN APP HEADER ---
+st.title("⚡ What Did I Miss?")
+st.markdown("##### Enterprise Context & Priority Extraction Engine")
+st.divider()
 
-# --- SPLIT LAYOUT WITH CONTAINERS ---
-col1, col2 = st.columns([1, 1.2], gap="large")
+# --- DUAL COLUMN LAYOUT ---
+col_left, col_right = st.columns([1, 1.1], gap="large")
 
-with col1:
+with col_left:
     with st.container(border=True):
-        st.markdown("### 📡 Raw Intercept")
+        st.markdown("### 📥 Raw Communications Stream")
         chat_text = st.text_area(
-            "Stream Input:", 
-            value=st.session_state.get("chat_input", ""), 
-            height=350,
-            placeholder="Awaiting data transmission..."
+            "Paste conversation logs below:",
+            value=st.session_state.get("chat_input", ""),
+            height=360,
+            placeholder="Paste chat messages here or use sidebar preset..."
         )
-        run_analysis = st.button("⚡ Initialize Analysis", use_container_width=True)
+        analyze_btn = st.button("🚀 Initialize Analysis", use_container_width=True)
 
-with col2:
+with col_right:
     with st.container(border=True):
-        st.markdown("### 🎯 Processed Intelligence")
-        if run_analysis:
-            if not api_key:
-                st.error("Access Denied: API Key required in sidebar.")
-            elif len(chat_text.strip()) < 10:
-                st.warning("Insufficient data stream to process.")
+        st.markdown("### 📊 Processed Intelligence")
+        
+        if analyze_btn:
+            clean_key = api_key.strip() if api_key else ""
+            input_data = chat_text.strip()
+            
+            if not clean_key:
+                st.error("⚠️ Authentication Error: Please provide your Gemini API Key in the sidebar.")
+            elif not input_data:
+                st.warning("⚠️ Empty Stream: Please provide chat text to analyze.")
+            elif len(input_data) < 10:
+                st.warning("⚠️ Input too short for meaningful context extraction.")
             else:
-                with st.spinner("Decrypting context and mapping priorities..."):
+                with st.spinner("Executing semantic extraction & priority mapping..."):
                     try:
-                        genai.configure(api_key=api_key.strip())
-                        # Using standard stable model alias to avoid 404 errors
-                        model = genai.GenerativeModel("gemini-pro")
+                        # Configure API and use stable flash model
+                        genai.configure(api_key=clean_key)
+                        model = genai.GenerativeModel("gemini-1.5-flash")
                         
                         prompt = f"""
-                        You are an elite operational AI. Process this chat log and extract objective facts.
-                        FORMAT EXACTLY AS FOLLOWS USING MARKDOWN:
-                        
+                        You are an elite operational intelligence assistant. Analyze the conversation stream below to solve the "Unread Chat Problem".
+
+                        STRICT RULES:
+                        1. Be objective and factual based solely on the text.
+                        2. Format output cleanly using the exact markdown structure requested below.
+
+                        REQUIRED OUTPUT FORMAT:
                         ### 📌 Executive Summary
-                        [2 sentences max summarizing the core issue]
-                        
-                        ### 🚨 Critical Risks
-                        * [Bullet points of blockers/risks]
-                        
-                        ### 🛠️ Action Protocol
-                        * **[Owner]** - [Task] (Deadline: [Time/Date if mentioned])
-                        
-                        RAW LOG:
-                        {chat_text}
+                        [2 sentences max summarizing the core situation]
+
+                        ### 🚨 Critical Risks & Blockers
+                        * [Bullet points of key blockers or risks. If none, write "None identified."]
+
+                        ### 🎯 Action Items & Owners
+                        * **[Owner Name]**: [Specific task or deliverable]
+
+                        ### ⏰ Deadlines & Timeline
+                        * **[Time/Date]** — [Milestone or deadline]
+
+                        CONVERSATION LOG:
+                        {input_data}
                         """
                         
                         response = model.generate_content(
-                            prompt, 
-                            generation_config=genai.types.GenerationConfig(temperature=0.0)
+                            prompt,
+                            generation_config=genai.types.GenerationConfig(temperature=0.1)
                         )
                         
-                        st.toast("Intelligence Extracted Successfully!", icon="✅")
+                        st.toast("Analysis completed successfully!", icon="✅")
                         
-                        tab1, tab2 = st.tabs(["📑 Executive Report", "💾 Export Data"])
-                        with tab1:
-                            st.markdown(f"<div class='report-box'>{response.text}</div>", unsafe_allow_html=True)
-                        with tab2:
-                            st.info("Securely download this intelligence briefing for offline review.")
+                        # Render output with clean tabs
+                        tab_rep, tab_exp = st.tabs(["📑 Report View", "💾 Export Data"])
+                        
+                        with tab_rep:
+                            st.markdown(f"<div class='report-card'>{response.text}</div>", unsafe_allow_html=True)
+                            
+                        with tab_exp:
+                            st.info("Download your structured intelligence report.")
                             st.download_button(
-                                "⬇️ Download Final Report (.txt)", 
-                                data=response.text, 
-                                file_name=f"Intel_{datetime.now().strftime('%H%M%S')}.txt", 
+                                label="⬇️ Download Report (.txt)",
+                                data=response.text,
+                                file_name=f"Intel_Report_{datetime.now().strftime('%H%M%S')}.txt",
+                                mime="text/plain",
                                 use_container_width=True
                             )
                             
                     except Exception as err:
-                        st.error(f"System Failure: {err}")
+                        st.error(f"Execution Error: {err}")
         else:
-            st.info("Awaiting command sequence. Inject data and initialize.")
+                        st.info("System standing by. Provide input data and click **'Initialize Analysis'**.")
